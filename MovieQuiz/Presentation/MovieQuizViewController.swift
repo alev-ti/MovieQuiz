@@ -2,6 +2,12 @@ import UIKit
 
 final class MovieQuizViewController: UIViewController {
     
+    @IBOutlet private weak var imageView: UIImageView!
+    @IBOutlet private weak var textLabel: UILabel!
+    @IBOutlet private weak var counterLabel: UILabel!
+    @IBOutlet private weak var yesButton: UIButton!
+    @IBOutlet private weak var noButton: UIButton!
+    
     private let questions: [QuizQuestion] = [
         QuizQuestion(image: "The Godfather",
                      text: "Рейтинг этого фильма больше чем 6?",
@@ -38,20 +44,17 @@ final class MovieQuizViewController: UIViewController {
     private var currentQuestionIndex: Int = 0
     private var correctAnswers: Int = 0
     
-    @IBOutlet private weak var imageView: UIImageView!
-    @IBOutlet private weak var textLabel: UILabel!
-    @IBOutlet private weak var counterLabel: UILabel!
-    
-    @IBAction private func yesButtonClicked(_ sender: UIButton) {
-        onAnswerButtonClicked(answer: true)
-    }
-
-    @IBAction private func noButtonClicked(_ sender: UIButton) {
-        onAnswerButtonClicked(answer: false)
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        showNextQuestion()
     }
     
     private func onAnswerButtonClicked(answer: Bool) {
         guard currentQuestionIndex < questions.count else { return }
+        
+        yesButton.isEnabled = false
+        noButton.isEnabled = false
+        
         let currentQuestion = questions[currentQuestionIndex]
         showAnswerResult(isCorrect: answer == currentQuestion.correctAnswer)
     }
@@ -113,6 +116,9 @@ final class MovieQuizViewController: UIViewController {
         let nextQuestion = questions[currentQuestionIndex]
         let viewModel = convert(model: nextQuestion)
         show(quiz: viewModel)
+        
+        yesButton.isEnabled = true
+        noButton.isEnabled = true
     }
     
     private func showAlert(result: QuizResultsViewModel) {
@@ -133,9 +139,12 @@ final class MovieQuizViewController: UIViewController {
         showNextQuestion()
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        showNextQuestion()
+    @IBAction private func yesButtonClicked(_ sender: UIButton) {
+        onAnswerButtonClicked(answer: true)
+    }
+
+    @IBAction private func noButtonClicked(_ sender: UIButton) {
+        onAnswerButtonClicked(answer: false)
     }
 }
 
