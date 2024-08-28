@@ -52,8 +52,7 @@ final class MovieQuizViewController: UIViewController {
     private func onAnswerButtonClicked(answer: Bool) {
         guard currentQuestionIndex < questions.count else { return }
         
-        yesButton.isEnabled = false
-        noButton.isEnabled = false
+        changeStateButton(isEnabled: false)
         
         let currentQuestion = questions[currentQuestionIndex]
         showAnswerResult(isCorrect: answer == currentQuestion.correctAnswer)
@@ -117,8 +116,12 @@ final class MovieQuizViewController: UIViewController {
         let viewModel = convert(model: nextQuestion)
         show(quiz: viewModel)
         
-        yesButton.isEnabled = true
-        noButton.isEnabled = true
+        changeStateButton(isEnabled: true)
+    }
+    
+    private func changeStateButton(isEnabled: Bool) {
+        yesButton.isEnabled = isEnabled
+        noButton.isEnabled = isEnabled
     }
     
     private func showAlert(result: QuizResultsViewModel) {
