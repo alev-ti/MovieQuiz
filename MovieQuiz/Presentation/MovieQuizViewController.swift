@@ -7,13 +7,13 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     @IBOutlet private weak var yesButton: UIButton!
     @IBOutlet private weak var noButton: UIButton!
     
-    private var currentQuestionIndex: Int = 0
-    private var correctAnswers: Int = 0
-    private let questionsAmount: Int = 10
+    private var currentQuestionIndex = 0
+    private var correctAnswers = 0
+    private let questionsAmount = 10
     private var currentQuestion: QuizQuestion?
     private var questionFactory: QuestionFactoryProtocol?
-    private let alertPresenter = AlertPresenter()
-    private var statisticService: StatisticService = StatisticService()
+    private var alertPresenter: AlertPresenter?
+    private var statisticService: StatisticServiceProtocol?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,11 +21,14 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         let questionFactory = QuestionFactory()
         questionFactory.delegate = self
         self.questionFactory = questionFactory
+        
+        let alertPresenter = AlertPresenter()
         alertPresenter.delegate = self
+        self.alertPresenter = alertPresenter
         
         questionFactory.requestNextQuestion()
         
-        statisticService = StatisticService()
+        statisticService = StatisticServiceImplementation()
     }
     
     func didReceiveNextQuestion(question: QuizQuestion?) {
@@ -84,7 +87,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     
     private func showNextQuestionOrResults() {
         if currentQuestionIndex == questionsAmount - 1 {
-            statisticService.store(correct: correctAnswers, total: questionsAmount)
+            statisticService?.store(correct: correctAnswers, total: questionsAmount)
             showResultsAlert()
         } else {
             currentQuestionIndex += 1
@@ -93,6 +96,8 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     }
     
     private func showResultsAlert() {
+        guard let statisticService = statisticService else { return }
+        
         let bestGameCorrect = statisticService.bestGame.correct
         let bestGameTotal = statisticService.bestGame.total
         let bestGameDate = statisticService.bestGame.date.dateTimeString
@@ -107,9 +112,10 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
             \(Messages.totalAccuracy.rawValue) \(totalAccuracy)
             """,
             buttonText: Messages.playAgain.rawValue,
-            completion: self.resetQuiz
+            completion: resetQuiz
         )
-        alertPresenter.showAlert(with: viewModel)
+        
+        alertPresenter?.showAlert(with: viewModel)
     }
     
     private func changeStateButton(isEnabled: Bool) {

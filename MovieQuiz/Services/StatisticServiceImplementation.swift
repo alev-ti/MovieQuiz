@@ -1,7 +1,7 @@
 import Foundation
 
-final class StatisticService: StatisticServiceProtocol {
-    private let storage: UserDefaults = .standard
+final class StatisticServiceImplementation: StatisticServiceProtocol {
+    private let storage = UserDefaults.standard
     
     var gamesCount: Int {
         get {
