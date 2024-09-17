@@ -96,7 +96,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     }
     
     private func showResultsAlert() {
-        guard let statisticService = statisticService else { return }
+        guard let statisticService else { return }
         
         let bestGameCorrect = statisticService.bestGame.correct
         let bestGameTotal = statisticService.bestGame.total
