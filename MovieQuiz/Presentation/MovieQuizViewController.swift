@@ -1,6 +1,7 @@
 import UIKit
 
 final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, AlertPresenterDelegate {
+    @IBOutlet private weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet private weak var imageView: UIImageView!
     @IBOutlet private weak var textLabel: UILabel!
     @IBOutlet private weak var counterLabel: UILabel!
@@ -18,17 +19,49 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let questionFactory = QuestionFactory()
-        questionFactory.delegate = self
-        self.questionFactory = questionFactory
+        questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
         
         let alertPresenter = AlertPresenter()
         alertPresenter.delegate = self
         self.alertPresenter = alertPresenter
         
-        questionFactory.requestNextQuestion()
-        
         statisticService = StatisticServiceImplementation()
+        
+        loadingIndicator(showed: true)
+        questionFactory?.loadData()
+    }
+    
+    func didLoadDataFromServer() {
+        activityIndicator.isHidden = true
+        questionFactory?.requestNextQuestion()
+    }
+
+    func didFailToLoadData(with error: Error) {
+        let errorMessage = (error as NSError).userInfo[NSLocalizedDescriptionKey] as? String ?? error.localizedDescription
+        showNetworkError(message: errorMessage)
+    }
+    
+    private func loadingIndicator(showed: Bool) {
+        if showed {
+            activityIndicator.isHidden = false
+            activityIndicator.startAnimating()
+        } else {
+            activityIndicator.isHidden = true
+            activityIndicator.stopAnimating()
+        }
+    }
+    
+    private func showNetworkError(message: String) {
+        loadingIndicator(showed: false)
+        
+        let viewModel = AlertModel(
+            title: "Error",
+            message: message,
+            buttonText: "Try again",
+            completion: resetQuiz
+        )
+        
+        alertPresenter?.showAlert(with: viewModel)
     }
     
     func didReceiveNextQuestion(question: QuizQuestion?) {
@@ -57,7 +90,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     }
     
     private func convert(model: QuizQuestion) -> QuizStepViewModel {
-        let image = UIImage(named: model.image) ?? UIImage()
+        let image = UIImage(data: model.image) ?? UIImage()
         let questionNumber = "\(currentQuestionIndex + 1)/\(questionsAmount)"
         return QuizStepViewModel(image: image, question: model.text, questionNumber: questionNumber)
     }
@@ -68,7 +101,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         }
         fillImageViewBorder(isCorrect: isCorrect)
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
-            guard let self = self else { return }
+            guard let self else { return }
             self.clearImageViewBorder()
             self.showNextQuestionOrResults()
         }
