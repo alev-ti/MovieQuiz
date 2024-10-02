@@ -28,11 +28,13 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         statisticService = StatisticServiceImplementation()
         
         loadingIndicator(showed: true)
-        questionFactory?.loadData()
+
+        questionFactory?.loadData { [weak self] in
+            self?.loadingIndicator(showed: false)
+        }
     }
     
     func didLoadDataFromServer() {
-        loadingIndicator(showed: false)
         questionFactory?.requestNextQuestion()
     }
 
@@ -58,7 +60,12 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
             title: "Error",
             message: message,
             buttonText: "Try again",
-            completion: resetQuiz
+            completion: { [weak self] in
+                self?.loadingIndicator(showed: true)
+                self?.questionFactory?.loadData { [weak self] in
+                    self?.loadingIndicator(showed: false)
+                }
+            }
         )
         
         alertPresenter?.showAlert(with: viewModel)

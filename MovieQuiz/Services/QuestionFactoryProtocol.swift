@@ -2,5 +2,5 @@ import Foundation
 
 protocol QuestionFactoryProtocol {
     func requestNextQuestion()
-    func loadData()
+    func loadData(completion: @escaping () -> Void)
 }

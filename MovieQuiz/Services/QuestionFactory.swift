@@ -10,7 +10,7 @@ class QuestionFactory: QuestionFactoryProtocol {
         self.delegate = delegate
     }
     
-    func loadData() {
+    func loadData(completion: @escaping () -> Void) {
         moviesLoader.loadMovies { [weak self] result in
             DispatchQueue.main.async {
                 guard let self else { return }
@@ -18,6 +18,7 @@ class QuestionFactory: QuestionFactoryProtocol {
                 switch result {
                     case .success(let mostPopularMovies):
                         self.movies = mostPopularMovies.items
+                        completion()
                         self.delegate?.didLoadDataFromServer()
                     case .failure(let error):
                         self.delegate?.didFailToLoadData(with: error)
