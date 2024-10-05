@@ -60,6 +60,13 @@ final class StatisticServiceImplementation: StatisticServiceProtocol {
             bestGame = currentGame
         }
     }
+    
+    func clearStorage() {
+        let allValues = UserDefaults.standard.dictionaryRepresentation()
+        allValues.keys.forEach { key in
+            UserDefaults.standard.removeObject(forKey: key)
+        }
+    }
 }
 
 private enum Keys: String {
