@@ -8,9 +8,9 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     @IBOutlet private weak var yesButton: UIButton!
     @IBOutlet private weak var noButton: UIButton!
     
-    private var currentQuestionIndex = 0
+    private let presenter = MovieQuizPresenter()
+    
     private var correctAnswers = 0
-    private let questionsAmount = 10
     private var currentQuestion: QuizQuestion?
     private var questionFactory: QuestionFactoryProtocol?
     private var alertPresenter: AlertPresenter?
@@ -75,7 +75,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         guard let question = question else { return }
 
         currentQuestion = question
-        let viewModel = convert(model: question)
+        let viewModel = presenter.convert(model: question)
         
         DispatchQueue.main.async { [weak self] in
             self?.show(quiz: viewModel)
@@ -85,7 +85,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     }
     
     private func onAnswerButtonClicked(answer: Bool) {
-        guard currentQuestionIndex < questionsAmount, let currentQuestion = currentQuestion else { return }
+        guard let currentQuestion = currentQuestion else { return }
         changeStateButton(isEnabled: false)
         showAnswerResult(isCorrect: answer == currentQuestion.correctAnswer)
     }
@@ -94,12 +94,6 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         imageView.image = step.image
         textLabel.text = step.question
         counterLabel.text = step.questionNumber
-    }
-    
-    private func convert(model: QuizQuestion) -> QuizStepViewModel {
-        let image = UIImage(data: model.image) ?? UIImage()
-        let questionNumber = "\(currentQuestionIndex + 1)/\(questionsAmount)"
-        return QuizStepViewModel(image: image, question: model.text, questionNumber: questionNumber)
     }
     
     private func showAnswerResult(isCorrect: Bool) {
@@ -126,11 +120,11 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     }
     
     private func showNextQuestionOrResults() {
-        if currentQuestionIndex == questionsAmount - 1 {
-            statisticService?.store(correct: correctAnswers, total: questionsAmount)
+        if presenter.isLastQuestion() {
+            statisticService?.store(correct: correctAnswers, total: presenter.questionsAmount)
             showResultsAlert()
         } else {
-            currentQuestionIndex += 1
+            presenter.switchToNextQuestion()
             self.questionFactory?.requestNextQuestion()
         }
     }
@@ -146,7 +140,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         let viewModel = AlertModel(
             title: Messages.roundFinished.rawValue,
             message: """
-            \(Messages.yourResult.rawValue)\(correctAnswers)/\(questionsAmount)
+            \(Messages.yourResult.rawValue)\(correctAnswers)/\(presenter.questionsAmount)
             \(Messages.gamesCount.rawValue) \(statisticService.gamesCount)
             \(Messages.bestGame.rawValue) \(bestGameCorrect)/\(bestGameTotal) (\(bestGameDate))
             \(Messages.totalAccuracy.rawValue) \(totalAccuracy)
@@ -164,7 +158,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     }
     
     private func resetQuiz() {
-        currentQuestionIndex = 0
+        presenter.resetQuestionIndex()
         correctAnswers = 0
         questionFactory?.requestNextQuestion()
     }
