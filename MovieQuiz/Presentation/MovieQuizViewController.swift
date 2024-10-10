@@ -18,6 +18,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        presenter.viewController = self
         
         questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
         
@@ -84,19 +85,13 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         changeStateButton(isEnabled: true)
     }
     
-    private func onAnswerButtonClicked(answer: Bool) {
-        guard let currentQuestion = currentQuestion else { return }
-        changeStateButton(isEnabled: false)
-        showAnswerResult(isCorrect: answer == currentQuestion.correctAnswer)
-    }
-    
     private func show(quiz step: QuizStepViewModel) {
         imageView.image = step.image
         textLabel.text = step.question
         counterLabel.text = step.questionNumber
     }
     
-    private func showAnswerResult(isCorrect: Bool) {
+    func showAnswerResult(isCorrect: Bool) {
         if isCorrect {
             correctAnswers += 1
         }
@@ -152,7 +147,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         alertPresenter?.showAlert(with: viewModel)
     }
     
-    private func changeStateButton(isEnabled: Bool) {
+    func changeStateButton(isEnabled: Bool) {
         yesButton.isEnabled = isEnabled
         noButton.isEnabled = isEnabled
     }
@@ -168,11 +163,13 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     }
     
     @IBAction private func yesButtonClicked(_ sender: UIButton) {
-        onAnswerButtonClicked(answer: true)
+        presenter.currentQuestion = currentQuestion
+        presenter.yesButtonClicked()
     }
 
     @IBAction private func noButtonClicked(_ sender: UIButton) {
-        onAnswerButtonClicked(answer: false)
+        presenter.currentQuestion = currentQuestion
+        presenter.noButtonClicked()
     }
 }
 
