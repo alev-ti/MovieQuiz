@@ -35,6 +35,7 @@
 		B9A83A372C87477200ADA32A /* QuizQuestion.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9A83A362C87477200ADA32A /* QuizQuestion.swift */; };
 		B9A83A3A2C87485D00ADA32A /* Messages.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9A83A392C87485D00ADA32A /* Messages.swift */; };
 		B9B2C9622CB6EC100027C5A1 /* MovieQuizPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9B2C9612CB6EC0B0027C5A1 /* MovieQuizPresenter.swift */; };
+		B9B2C9642CB943D20027C5A1 /* MovieQuizViewControllerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9B2C9632CB943C30027C5A1 /* MovieQuizViewControllerProtocol.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -87,6 +88,7 @@
 		B9B2C9352CB3E9110027C5A1 /* MovieQuizTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MovieQuizTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B9B2C9482CB44E550027C5A1 /* MovieQuizUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MovieQuizUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B9B2C9612CB6EC0B0027C5A1 /* MovieQuizPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieQuizPresenter.swift; sourceTree = "<group>"; };
+		B9B2C9632CB943C30027C5A1 /* MovieQuizViewControllerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieQuizViewControllerProtocol.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -136,6 +138,7 @@
 			isa = PBXGroup;
 			children = (
 				B98BF1B92CA71BD20001B529 /* MoviesLoader.swift */,
+				B9B2C9632CB943C30027C5A1 /* MovieQuizViewControllerProtocol.swift */,
 				B9A83A302C8744ED00ADA32A /* QuestionFactory.swift */,
 				B98BF1B52CA7166B0001B529 /* NetworkClient.swift */,
 				B9A83A392C87485D00ADA32A /* Messages.swift */,
@@ -361,6 +364,7 @@
 			files = (
 				AD5EE5DE284D7887003966EF /* UIColor+Extensions.swift in Sources */,
 				AD7AFA552836189F00399704 /* Array+Extensions.swift in Sources */,
+				B9B2C9642CB943D20027C5A1 /* MovieQuizViewControllerProtocol.swift in Sources */,
 				B933D9DB2C8B41E9008E8AF6 /* AlertPresenterDelegate.swift in Sources */,
 				AD1ABAB62831907B00B3E448 /* MovieQuizViewController.swift in Sources */,
 				B99574B02C9304A7008D1FAE /* StatisticServiceProtocol.swift in Sources */,
