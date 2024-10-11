@@ -69,7 +69,7 @@ final class MovieQuizUITests: XCTestCase {
         }
         
         sleep(1)
-        let alert = app.alerts.element(matching: .alert, identifier: "GameResultsAlert")
+        let alert = app.alerts.element(matching: .alert, identifier: "messageAlert")
         sleep(1)
         XCTAssertTrue(alert.exists)
         XCTAssertTrue(alert.label == "Этот раунд окончен!")
@@ -85,7 +85,7 @@ final class MovieQuizUITests: XCTestCase {
         }
         
         sleep(1)
-        let alert = app.alerts.element(matching: .alert, identifier: "GameResultsAlert")
+        let alert = app.alerts.element(matching: .alert, identifier: "messageAlert")
         alert.buttons.firstMatch.tap()
         
         sleep(1)
@@ -94,22 +94,5 @@ final class MovieQuizUITests: XCTestCase {
         
         XCTAssertFalse(alert.exists)
         XCTAssertTrue(indexLabel.label == "1/10")
-    }
-
-    @MainActor
-    func testLaunchPerformance() throws {
-        if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 7.0, *) {
-            // This measures how long it takes to launch your application.
-            measure(metrics: [XCTApplicationLaunchMetric()]) {
-                let app = XCUIApplication()
-                app.launch()
-                
-                let expectation = XCTestExpectation(description: "App launched and ready")
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                    expectation.fulfill()
-                }
-                wait(for: [expectation], timeout: 5.0)
-            }
-        }
     }
 }

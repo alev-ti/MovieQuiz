@@ -1,6 +1,6 @@
 import UIKit
 
-final class MovieQuizViewController: UIViewController, AlertPresenterDelegate {
+final class MovieQuizViewController: UIViewController, MovieQuizViewControllerProtocol, AlertPresenterDelegate {
     @IBOutlet private weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet private weak var imageView: UIImageView!
     @IBOutlet private weak var textLabel: UILabel!
@@ -42,26 +42,18 @@ final class MovieQuizViewController: UIViewController, AlertPresenterDelegate {
         }
     }
     
-    func showNetworkError(message: String) {
-        let viewModel = AlertModel(
-            title: "Error",
-            message: message,
-            buttonText: "Try again",
-            completion: { [weak self] in
-                self?.loadingIndicator(showed: true)
-                self?.presenter.questionFactory?.loadData { [weak self] in
-                    self?.loadingIndicator(showed: false)
-                }
-            }
-        )
-        
-        alertPresenter?.showAlert(with: viewModel)
+    func show(networkError: AlertModel) {
+        alertPresenter?.showAlert(with: networkError)
     }
     
     func show(quiz step: QuizStepViewModel) {
         imageView.image = step.image
         textLabel.text = step.question
         counterLabel.text = step.questionNumber
+    }
+    
+    func show(quiz result: AlertModel) {
+        alertPresenter?.showAlert(with: result)
     }
     
     func fillImageViewBorder(isCorrect: Bool) {

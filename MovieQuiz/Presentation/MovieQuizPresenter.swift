@@ -1,7 +1,7 @@
 import UIKit
 
 final class MovieQuizPresenter: QuestionFactoryDelegate {
-    private weak var viewController: MovieQuizViewController?
+    private weak var viewController: MovieQuizViewControllerProtocol?
     private let statisticService: StatisticServiceProtocol!
     var questionFactory: QuestionFactoryProtocol?
     
@@ -10,7 +10,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     private var correctAnswers: Int = 0
     private var currentQuestion: QuizQuestion?
     
-    init(viewController: MovieQuizViewController) {
+    init(viewController: MovieQuizViewControllerProtocol) {
         self.viewController = viewController
         
         statisticService = StatisticServiceImplementation()
@@ -30,7 +30,19 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     func didFailToLoadData(with error: Error) {
         viewController?.loadingIndicator(showed: false)
         let errorMessage = (error as NSError).userInfo[NSLocalizedDescriptionKey] as? String ?? error.localizedDescription
-        viewController?.showNetworkError(message: errorMessage)
+        let viewModel = AlertModel(
+            title: "Error",
+            message: errorMessage,
+            buttonText: "Try again",
+            completion: { [weak self] in
+                self?.viewController?.loadingIndicator(showed: true)
+                self?.questionFactory?.loadData { [weak self] in
+                    self?.viewController?.loadingIndicator(showed: false)
+                }
+            }
+        )
+        
+        viewController?.show(networkError: viewModel)
     }
     
     func didReceiveNextQuestion(question: QuizQuestion?) {
@@ -59,7 +71,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     
     private func proceedToNextQuestionOrResults() {
         if self.isLastQuestion() {
-            self.showResultsAlert()
+            self.createResultsMessage()
         } else {
             self.switchToNextQuestion()
             questionFactory?.requestNextQuestion()
@@ -80,7 +92,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
         }
     }
     
-    func showResultsAlert() {
+    func createResultsMessage() {
         statisticService?.store(correct: correctAnswers, total: questionsAmount)
         
         let bestGameCorrect = statisticService.bestGame.correct
@@ -100,7 +112,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
             completion: self.resetQuiz
         )
         
-        viewController?.alertPresenter?.showAlert(with: viewModel)
+        viewController?.show(quiz: viewModel)
     }
     
     func resetQuiz() {
