@@ -8,5 +8,4 @@ protocol MovieQuizViewControllerProtocol: AnyObject {
     func fillImageViewBorder(isCorrect: Bool)
     func clearImageViewBorder()
     func changeStateButton(isEnabled: Bool)
-    func presentAlert(_ alert: UIAlertController)
 }

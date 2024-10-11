@@ -9,7 +9,6 @@ final class MovieQuizViewControllerMock: MovieQuizViewControllerProtocol {
     func fillImageViewBorder(isCorrect: Bool) {}
     func clearImageViewBorder() {}
     func changeStateButton(isEnabled: Bool) {}
-    func presentAlert(_ alert: UIAlertController) {}
 }
 
 final class MovieQuizPresenterTests: XCTestCase {
