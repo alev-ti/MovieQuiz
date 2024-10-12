@@ -18,13 +18,17 @@ class QuestionFactory: QuestionFactoryProtocol {
                 switch result {
                     case .success(let mostPopularMovies):
                         self.movies = mostPopularMovies.items
-                        completion()
                         self.delegate?.didLoadDataFromServer()
                     case .failure(let error):
                         self.delegate?.didFailToLoadData(with: error)
                 }
+                completion()
             }
         }
+    }
+    
+    func loadData() {
+        loadData { }
     }
     
     func requestNextQuestion() {
